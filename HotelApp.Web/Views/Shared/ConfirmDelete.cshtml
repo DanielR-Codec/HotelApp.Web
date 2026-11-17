@@ -1,0 +1,30 @@
+@model ConfirmDeleteViewModel
+@{
+    ViewData["Title"] = $"{Model.ActionVerb} {Model.EntityName}";
+}
+
+<h1 class="h3 mb-3">@Model.ActionVerb @Model.EntityName</h1>
+
+<div class="card shadow-sm" style="max-width: 640px;">
+    <div class="card-body">
+        <p class="mb-3">¿Está seguro de que desea @Model.ActionVerb.ToLowerInvariant() @Model.EntityName?</p>
+
+        <dl class="row mb-3">
+            @foreach (var field in Model.Fields)
+            {
+                <dt class="col-sm-4">@field.Key</dt>
+                <dd class="col-sm-8">@field.Value</dd>
+            }
+        </dl>
+
+        @if (!string.IsNullOrEmpty(Model.Warning))
+        {
+            <div class="alert alert-warning small mb-3">@Model.Warning</div>
+        }
+
+        <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">@Model.ActionVerb</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>

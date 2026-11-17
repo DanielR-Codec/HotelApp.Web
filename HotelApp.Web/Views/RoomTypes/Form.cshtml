@@ -1,0 +1,50 @@
+@model HotelApp.Web.Models.RoomTypes.RoomTypeFormViewModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nuevo tipo de habitación" : "Editar tipo de habitación";
+    var action = Model.IsNew ? "Create" : "Edit";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<div class="card shadow-sm" style="max-width: 560px;">
+    <div class="card-body">
+        <form asp-action="@action" asp-route-id="@(Model.IsNew ? null : Model.RoomTypeId)" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" maxlength="60" placeholder="Ej.: Doble, Suite Presidencial" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="MaxCapacity" class="form-label"></label>
+                    <input asp-for="MaxCapacity" class="form-control" type="number" min="1" max="20" step="1" />
+                    <span asp-validation-for="MaxCapacity" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="BaseRate" class="form-label"></label>
+                    <input asp-for="BaseRate" class="form-control" type="number" min="0.01" step="0.01" />
+                    <span asp-validation-for="BaseRate" class="text-danger small"></span>
+                </div>
+            </div>
+
+            @if (!Model.IsNew)
+            {
+                <div class="alert alert-info small">
+                    Las reservas ya hechas conservan el precio con el que se crearon; el cambio de tarifa solo aplica a las nuevas.
+                </div>
+            }
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

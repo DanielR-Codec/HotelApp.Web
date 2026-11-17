@@ -1,0 +1,76 @@
+@model HotelApp.Web.Models.Rooms.RoomFormViewModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nueva habitación" : "Editar habitación";
+    var action = Model.IsNew ? "Create" : "Edit";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<div class="card shadow-sm" style="max-width: 640px;">
+    <div class="card-body">
+        @if (!Model.FloorOptions.Any())
+        {
+            <div class="alert alert-warning">
+                Primero debe registrar un piso activo.
+                <a asp-controller="Floors" asp-action="Create" class="alert-link">Crear piso</a>
+            </div>
+        }
+        @if (!Model.RoomTypeOptions.Any())
+        {
+            <div class="alert alert-warning">
+                Primero debe registrar un tipo de habitación.
+                <a asp-controller="RoomTypes" asp-action="Create" class="alert-link">Crear tipo</a>
+            </div>
+        }
+
+        <form asp-action="@action" asp-route-id="@(Model.IsNew ? null : Model.RoomId)" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="FloorId" class="form-label"></label>
+                <select asp-for="FloorId" asp-items="Model.FloorOptions" class="form-select">
+                    <option value="0">— Seleccione —</option>
+                </select>
+                <span asp-validation-for="FloorId" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Number" class="form-label"></label>
+                <input asp-for="Number" class="form-control" maxlength="10" placeholder="Ej.: 101" />
+                <span asp-validation-for="Number" class="text-danger small"></span>
+                <div class="form-text">No se puede repetir dentro del mismo hotel.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="RoomTypeId" class="form-label"></label>
+                <select asp-for="RoomTypeId" asp-items="Model.RoomTypeOptions" class="form-select">
+                    <option value="0">— Seleccione —</option>
+                </select>
+                <span asp-validation-for="RoomTypeId" class="text-danger small"></span>
+            </div>
+
+            @if (!Model.IsNew)
+            {
+                <div class="mb-3">
+                    <span class="form-label d-block">Estado actual</span>
+                    <span class="badge bg-secondary">@Model.CurrentStatus</span>
+                    <div class="form-text">El estado se cambia desde el listado de habitaciones o con el Check-in / Check-out.</div>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+            }
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

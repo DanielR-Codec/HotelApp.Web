@@ -1,0 +1,9 @@
+@model (bool IsActive, string ActiveText, string InactiveText)
+@if (Model.IsActive)
+{
+    <span class="badge bg-success">@Model.ActiveText</span>
+}
+else
+{
+    <span class="badge bg-secondary">@Model.InactiveText</span>
+}

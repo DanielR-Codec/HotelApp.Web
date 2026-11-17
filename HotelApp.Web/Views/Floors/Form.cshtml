@@ -1,0 +1,61 @@
+@model HotelApp.Web.Models.Floors.FloorFormViewModel
+@{
+    ViewData["Title"] = Model.IsNew ? "Nuevo piso" : "Editar piso";
+    var action = Model.IsNew ? "Create" : "Edit";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+
+<div class="card shadow-sm" style="max-width: 640px;">
+    <div class="card-body">
+        @if (!Model.BlockOptions.Any())
+        {
+            <div class="alert alert-warning">
+                Primero debe registrar un bloque activo.
+                <a asp-controller="Blocks" asp-action="Create" class="alert-link">Crear bloque</a>
+            </div>
+        }
+
+        <form asp-action="@action" asp-route-id="@(Model.IsNew ? null : Model.FloorId)" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger small" role="alert"></div>
+
+            <div class="mb-3">
+                <label asp-for="BlockId" class="form-label"></label>
+                <select asp-for="BlockId" asp-items="Model.BlockOptions" class="form-select">
+                    <option value="0">— Seleccione —</option>
+                </select>
+                <span asp-validation-for="BlockId" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Number" class="form-label"></label>
+                <input asp-for="Number" class="form-control" type="number" min="0" max="200" step="1" />
+                <span asp-validation-for="Number" class="text-danger small"></span>
+                <div class="form-text">Use 0 para la planta baja.</div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" maxlength="250"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            @if (!Model.IsNew)
+            {
+                <div class="form-check mb-3">
+                    <input asp-for="IsActive" class="form-check-input" />
+                    <label asp-for="IsActive" class="form-check-label"></label>
+                </div>
+            }
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

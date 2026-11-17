@@ -1,0 +1,72 @@
+@model HotelApp.Web.Models.Blocks.BlockIndexViewModel
+@{
+    ViewData["Title"] = "Bloques";
+    var isAdmin = User.IsAdministrator();
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Gestión de bloques</h1>
+    @if (isAdmin)
+    {
+        <a asp-action="Create" asp-route-hotelId="@Model.HotelId" class="btn btn-primary">+ Nuevo bloque</a>
+    }
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-6 col-md-4">
+        <label for="hotelId" class="form-label small mb-1">Hotel</label>
+        <select id="hotelId" name="hotelId" asp-items="Model.HotelOptions" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos los hoteles</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="includeInactive" name="includeInactive" value="true"
+                   @(Model.IncludeInactive ? "checked" : "") onchange="this.form.submit()" />
+            <label class="form-check-label" for="includeInactive">Mostrar inactivos</label>
+        </div>
+    </div>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info">No hay bloques para mostrar.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Hotel</th>
+                    <th>Bloque</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var block in Model.Items)
+                {
+                    <tr class="@(block.IsActive ? "" : "text-muted")">
+                        <td>@block.HotelName</td>
+                        <td class="fw-semibold">@block.Name</td>
+                        <td>@(block.Description ?? "—")</td>
+                        <td>@await Html.PartialAsync("_StatusBadge", (block.IsActive, "Activo", "Inactivo"))</td>
+                        <td class="text-end text-nowrap">
+                            <a asp-controller="Floors" asp-action="Index" asp-route-blockId="@block.BlockId" class="btn btn-sm btn-outline-secondary">Pisos</a>
+                            @if (isAdmin)
+                            {
+                                <a asp-action="Edit" asp-route-id="@block.BlockId" class="btn btn-sm btn-outline-primary">Editar</a>
+                                @if (block.IsActive)
+                                {
+                                    <a asp-action="Delete" asp-route-id="@block.BlockId" class="btn btn-sm btn-outline-danger">Desactivar</a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

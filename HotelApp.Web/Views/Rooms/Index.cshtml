@@ -1,0 +1,136 @@
+@model HotelApp.Web.Models.Rooms.RoomIndexViewModel
+@{
+    ViewData["Title"] = "Habitaciones";
+    var isAdmin = User.IsAdministrator();
+
+    string StatusClass(string status) => status switch
+    {
+        RoomStatus.Available => "bg-success",
+        RoomStatus.Occupied => "bg-danger",
+        RoomStatus.Cleaning => "bg-info text-dark",
+        RoomStatus.Maintenance => "bg-warning text-dark",
+        _ => "bg-secondary"
+    };
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">Gestión de habitaciones</h1>
+    @if (isAdmin)
+    {
+        <a asp-action="Create" asp-route-floorId="@Model.FloorId" class="btn btn-primary">+ Nueva habitación</a>
+    }
+</div>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-6 col-lg-3">
+        <label for="hotelId" class="form-label small mb-1">Hotel</label>
+        <select id="hotelId" name="hotelId" asp-items="Model.HotelOptions" class="form-select"
+                onchange="this.form.blockId.value=''; this.form.floorId.value=''; this.form.submit()">
+            <option value="">Todos los hoteles</option>
+        </select>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <label for="blockId" class="form-label small mb-1">Bloque</label>
+        <select id="blockId" name="blockId" asp-items="Model.BlockOptions" class="form-select"
+                onchange="this.form.floorId.value=''; this.form.submit()">
+            <option value="">Todos los bloques</option>
+        </select>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <label for="floorId" class="form-label small mb-1">Piso</label>
+        <select id="floorId" name="floorId" asp-items="Model.FloorOptions" class="form-select" onchange="this.form.submit()">
+            <option value="">Todos los pisos</option>
+        </select>
+    </div>
+    <div class="col-auto">
+        <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="includeInactive" name="includeInactive" value="true"
+                   @(Model.IncludeInactive ? "checked" : "") onchange="this.form.submit()" />
+            <label class="form-check-label" for="includeInactive">Mostrar dadas de baja</label>
+        </div>
+    </div>
+</form>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info">No hay habitaciones para mostrar.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white shadow-sm">
+            <thead class="table-light">
+                <tr>
+                    <th>Número</th>
+                    <th>Hotel</th>
+                    <th>Bloque</th>
+                    <th>Piso</th>
+                    <th>Tipo</th>
+                    <th class="text-end">Tarifa base</th>
+                    <th>Estado</th>
+                    <th>Cambiar estado</th>
+                    @if (isAdmin)
+                    {
+                        <th class="text-end">Acciones</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var room in Model.Items)
+                {
+                    <tr class="@(room.IsActive ? "" : "text-muted")">
+                        <td class="fw-semibold">@room.Number</td>
+                        <td>@room.HotelName</td>
+                        <td>@room.BlockName</td>
+                        <td>@room.FloorNumber</td>
+                        <td>@room.RoomTypeName <span class="text-muted small">(@room.MaxCapacity pers.)</span></td>
+                        <td class="text-end">RD$ @room.BaseRate.ToString("N2")</td>
+                        <td>
+                            @if (room.IsActive)
+                            {
+                                <span class="badge @StatusClass(room.CurrentStatus)">@room.CurrentStatus</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Dada de baja</span>
+                            }
+                        </td>
+                        <td>
+                            @* CU-012: any user can change the status by hand, except while a guest is inside *@
+                            @if (room.IsActive && room.CurrentStatus != RoomStatus.Occupied)
+                            {
+                                <form asp-action="ChangeStatus" asp-route-id="@room.RoomId" method="post" class="d-flex gap-1 m-0">
+                                    <input type="hidden" name="hotelId" value="@Model.HotelId" />
+                                    <input type="hidden" name="blockId" value="@Model.BlockId" />
+                                    <input type="hidden" name="floorId" value="@Model.FloorId" />
+                                    <input type="hidden" name="includeInactive" value="@Model.IncludeInactive.ToString().ToLowerInvariant()" />
+                                    <select name="newStatus" class="form-select form-select-sm" aria-label="Nuevo estado de la habitación @room.Number">
+                                        @foreach (var status in Model.ManualStatuses)
+                                        {
+                                            <option value="@status" selected="@(status == room.CurrentStatus)">@status</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-sm btn-outline-dark">Aplicar</button>
+                                </form>
+                            }
+                            else if (room.IsActive)
+                            {
+                                <span class="small text-muted">Requiere Check-out</span>
+                            }
+                        </td>
+                        @if (isAdmin)
+                        {
+                            <td class="text-end text-nowrap">
+                                <a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-sm btn-outline-primary">Editar</a>
+                                @if (room.IsActive)
+                                {
+                                    <a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-sm btn-outline-danger">Dar de baja</a>
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
