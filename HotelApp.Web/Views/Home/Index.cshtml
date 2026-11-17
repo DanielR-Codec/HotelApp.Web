@@ -1,8 +1,38 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Inicio";
+    var modules = new[]
+    {
+        (Title: "Hoteles", Count: Model.Hotels, Controller: "Hotels", Text: "Propiedades del grupo: nombre, dirección y contacto."),
+        (Title: "Bloques", Count: Model.Blocks, Controller: "Blocks", Text: "Edificios, torres o alas de cada hotel."),
+        (Title: "Pisos", Count: Model.Floors, Controller: "Floors", Text: "Pisos de cada bloque."),
+        (Title: "Habitaciones", Count: Model.Rooms, Controller: "Rooms", Text: "Cuartos físicos, su tipo y su estado actual."),
+        (Title: "Tipos de habitación", Count: Model.RoomTypes, Controller: "RoomTypes", Text: "Categorías, capacidad máxima y tarifa base.")
+    };
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="h3 mb-1">Bienvenido, @User.Identity?.Name</h1>
+<p class="text-muted mb-4">
+    Estructura del hotel: <strong>Hotel → Bloque → Piso → Habitación</strong>.
+    @if (!User.IsAdministrator())
+    {
+        <span>Su perfil de Recepcionista puede consultar y cambiar el estado de las habitaciones.</span>
+    }
+</p>
+
+<div class="row g-3">
+    @foreach (var module in modules)
+    {
+        <div class="col-sm-6 col-lg-4">
+            <a asp-controller="@module.Controller" asp-action="Index" class="card h-100 shadow-sm text-decoration-none text-reset module-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h2 class="h5 card-title mb-2">@module.Title</h2>
+                        <span class="badge bg-primary fs-6">@module.Count</span>
+                    </div>
+                    <p class="card-text small text-muted mb-0">@module.Text</p>
+                </div>
+            </a>
+        </div>
+    }
 </div>

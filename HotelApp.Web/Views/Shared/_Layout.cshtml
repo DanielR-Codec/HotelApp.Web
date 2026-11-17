@@ -1,47 +1,67 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - HotelApp.Web</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - HotelApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/HotelApp.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        string Active(string name) => string.Equals(controller, name, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+    }
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">HotelApp.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+                <a class="navbar-brand fw-semibold" asp-controller="Home" asp-action="Index">HotelApp</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                            aria-controls="mainNav" aria-expanded="false" aria-label="Mostrar menú">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="mainNav">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item"><a class="nav-link @Active("Home")" asp-controller="Home" asp-action="Index">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("Hotels")" asp-controller="Hotels" asp-action="Index">Hoteles</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("Blocks")" asp-controller="Blocks" asp-action="Index">Bloques</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("Floors")" asp-controller="Floors" asp-action="Index">Pisos</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("Rooms")" asp-controller="Rooms" asp-action="Index">Habitaciones</a></li>
+                            <li class="nav-item"><a class="nav-link @Active("RoomTypes")" asp-controller="RoomTypes" asp-action="Index">Tipos de habitación</a></li>
+                        </ul>
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="navbar-text small">
+                                @User.Identity.Name
+                                <span class="badge @(User.IsAdministrator() ? "bg-warning text-dark" : "bg-secondary") ms-1">
+                                    @(User.IsAdministrator() ? UserRole.Administrator : UserRole.Receptionist)
+                                </span>
+                            </span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
+                                <button type="submit" class="btn btn-outline-light btn-sm">Cerrar sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                }
             </div>
         </nav>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-4">
+            <partial name="_Alerts" />
             @RenderBody()
         </main>
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - HotelApp.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container small">
+            &copy; @DateTime.Now.Year - Jose Daniel · Sistema de Gestión de Reservas de Hoteles
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
