@@ -1,0 +1,25 @@
+namespace HotelApp.API.Infrastructure
+{
+    /// <summary>Settings of the "Jwt" section of appsettings.json.</summary>
+    public class JwtOptions
+    {
+        public const string SectionName = "Jwt";
+
+        public string Issuer { get; set; } = "HotelApp.API";
+        public string Audience { get; set; } = "HotelApp.Clients";
+
+        /// <summary>HMAC-SHA256 signing key. At least 32 characters. In production set it with user-secrets or an environment variable.</summary>
+        public string Key { get; set; } = string.Empty;
+
+        public int ExpirationMinutes { get; set; } = 480;
+
+        public void Validate()
+        {
+            if (string.IsNullOrWhiteSpace(Key) || Key.Length < 32)
+                throw new InvalidOperationException("Jwt:Key must have at least 32 characters.");
+
+            if (ExpirationMinutes <= 0)
+                throw new InvalidOperationException("Jwt:ExpirationMinutes must be greater than zero.");
+        }
+    }
+}
