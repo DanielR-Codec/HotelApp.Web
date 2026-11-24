@@ -25,7 +25,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of POST /api/hotels. A new hotel is always created active.</summary>
     public class HotelCreateRequest
     {
         [Required(ErrorMessage = "El nombre del hotel es obligatorio.")]
@@ -60,7 +59,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of PUT /api/hotels/{id}. IsActive = false deactivates the hotel (same rule as DELETE).</summary>
     public class HotelUpdateRequest : HotelCreateRequest
     {
         public bool IsActive { get; set; } = true;

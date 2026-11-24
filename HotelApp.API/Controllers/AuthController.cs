@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.API.Controllers
 {
-    /// <summary>CU-001 / RF-011: login. Returns the JWT that must be sent in the Authorization header of the other endpoints.</summary>
     [Route("api/auth")]
     public class AuthController : ApiControllerBase
     {
@@ -19,7 +18,6 @@ namespace HotelApp.API.Controllers
             _tokens = tokens;
         }
 
-        /// <summary>Validates email and password and returns a bearer token.</summary>
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType<LoginResponse>(StatusCodes.Status200OK)]
@@ -42,7 +40,6 @@ namespace HotelApp.API.Controllers
             });
         }
 
-        /// <summary>Data of the user that owns the token.</summary>
         [HttpGet("me")]
         [ProducesResponseType<UserInfoDto>(StatusCodes.Status200OK)]
         public async Task<ActionResult<UserInfoDto>> Me()

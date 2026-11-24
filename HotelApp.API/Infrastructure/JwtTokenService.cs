@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HotelApp.API.Infrastructure
 {
-    /// <summary>Issues the JWT that identifies the logged-in user (same claims the MVC site keeps in its cookie).</summary>
     public class JwtTokenService
     {
         private readonly JwtOptions _options;

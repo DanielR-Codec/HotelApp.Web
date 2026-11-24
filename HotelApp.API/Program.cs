@@ -12,7 +12,6 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---------- Data access + business layers (same registrations the MVC site uses) ----------
 builder.Services.AddDbContext<HotelContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -21,7 +20,6 @@ builder.Services.AddDbContext<HotelContext>(options =>
 builder.Services.AddDALDependencies();
 builder.Services.AddBLDependencies();
 
-// ---------- Authentication: JWT bearer tokens (CU-001 / RF-011) ----------
 var jwtOptions = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()
     ?? throw new InvalidOperationException($"Missing configuration section '{JwtOptions.SectionName}'.");
 jwtOptions.Validate();
@@ -33,7 +31,6 @@ builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        // Keep the claim names exactly as they are written by JwtTokenService
         options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -50,18 +47,15 @@ builder.Services
         };
     });
 
-// Every endpoint requires a valid token unless it is marked [AllowAnonymous]
 builder.Services.AddAuthorization(options =>
 {
     options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 });
 
-// ---------- Controllers + error handling ----------
 builder.Services.AddControllers();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<HotelAppExceptionHandler>();
 
-// ---------- Swagger (with the "Authorize" button for the JWT) ----------
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -84,16 +78,12 @@ builder.Services.AddSwaggerGen(options =>
     };
     options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, bearer);
     options.AddSecurityRequirement(new OpenApiSecurityRequirement { [bearer] = Array.Empty<string>() });
-
-    var xmlFile = Path.Combine(AppContext.BaseDirectory, $"{typeof(Program).Assembly.GetName().Name}.xml");
-    if (File.Exists(xmlFile))
-        options.IncludeXmlComments(xmlFile);
 });
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
-app.UseStatusCodePages();   // empty 401 / 403 / 404 responses get a ProblemDetails body
+app.UseStatusCodePages();
 
 if (app.Environment.IsDevelopment())
 {

@@ -8,10 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.API.Controllers
 {
-    /// <summary>
-    /// Rooms. Any logged-in user can read, search availability (CU-004) and change the status (CU-012);
-    /// creating, editing and taking rooms out of service is for the Administrator (CU-011 / RF-001).
-    /// </summary>
     [Route("api/rooms")]
     public class RoomsController : ApiControllerBase
     {
@@ -22,7 +18,6 @@ namespace HotelApp.API.Controllers
             _rooms = rooms;
         }
 
-        /// <summary>Rooms ordered by block, floor and number; optionally filtered by hotel, block and/or floor. By default only the active ones.</summary>
         [HttpGet]
         [ProducesResponseType<IEnumerable<RoomDto>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetAll(
@@ -44,11 +39,6 @@ namespace HotelApp.API.Controllers
             return room is null ? NotFoundProblem("La habitación no existe.") : Ok(RoomDto.FromEntity(room));
         }
 
-        /// <summary>CU-004 / RF-004: free rooms for the dates and number of guests, with their price per night and estimated total.</summary>
-        /// <param name="checkIn">Arrival date (yyyy-MM-dd).</param>
-        /// <param name="checkOut">Departure date (yyyy-MM-dd), after the arrival date.</param>
-        /// <param name="guests">Number of guests (at least 1).</param>
-        /// <param name="hotelId">Optional: only rooms of this hotel.</param>
         [HttpGet("available")]
         [ProducesResponseType<IEnumerable<AvailableRoomDto>>(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -74,7 +64,6 @@ namespace HotelApp.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = room.RoomId }, RoomDto.FromEntity(room));
         }
 
-        /// <summary>Changes number, floor, type and whether the room is active. The status is changed with PATCH /api/rooms/{id}/status.</summary>
         [HttpPut("{id:int}")]
         [Authorize(Roles = UserRole.Administrator)]
         [ProducesResponseType<RoomDto>(StatusCodes.Status200OK)]
@@ -89,7 +78,6 @@ namespace HotelApp.API.Controllers
             return updated is null ? NotFoundProblem("La habitación no existe.") : Ok(RoomDto.FromEntity(updated));
         }
 
-        /// <summary>CU-012 / RF-010: manual status change to "Disponible", "En Limpieza" or "Mantenimiento".</summary>
         [HttpPatch("{id:int}/status")]
         [ProducesResponseType<RoomDto>(StatusCodes.Status200OK)]
         [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
@@ -102,7 +90,6 @@ namespace HotelApp.API.Controllers
             return updated is null ? NotFoundProblem("La habitación no existe.") : Ok(RoomDto.FromEntity(updated));
         }
 
-        /// <summary>RF-001 soft delete: the room is taken out of service. Not allowed while it has current reservations.</summary>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = UserRole.Administrator)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

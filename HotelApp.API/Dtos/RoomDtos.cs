@@ -23,7 +23,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of POST /api/rooms. A new room is always created active and "Disponible".</summary>
     public class RoomCreateRequest
     {
         [Required(ErrorMessage = "El número de habitación es obligatorio.")]
@@ -46,13 +45,11 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of PUT /api/rooms/{id}. The status is not changed here: use PATCH /api/rooms/{id}/status.</summary>
     public class RoomUpdateRequest : RoomCreateRequest
     {
         public bool IsActive { get; set; } = true;
     }
 
-    /// <summary>Body of PATCH /api/rooms/{id}/status (CU-012): "Disponible", "En Limpieza" or "Mantenimiento".</summary>
     public class RoomStatusRequest
     {
         [Required(ErrorMessage = "El estado es obligatorio.")]

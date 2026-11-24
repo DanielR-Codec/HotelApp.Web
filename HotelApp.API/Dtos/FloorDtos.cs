@@ -21,7 +21,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of POST /api/floors. A new floor is always created active.</summary>
     public class FloorCreateRequest
     {
         [Range(1, int.MaxValue, ErrorMessage = "Debe indicar el bloque al que pertenece el piso.")]
@@ -43,7 +42,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of PUT /api/floors/{id}. A floor that already has rooms cannot move to another block.</summary>
     public class FloorUpdateRequest : FloorCreateRequest
     {
         public bool IsActive { get; set; } = true;

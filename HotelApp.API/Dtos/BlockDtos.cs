@@ -21,7 +21,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of POST /api/blocks. A new block is always created active.</summary>
     public class BlockCreateRequest
     {
         [Range(1, int.MaxValue, ErrorMessage = "Debe indicar el hotel al que pertenece el bloque.")]
@@ -44,7 +43,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of PUT /api/blocks/{id}. A block that already has floors cannot move to another hotel.</summary>
     public class BlockUpdateRequest : BlockCreateRequest
     {
         public bool IsActive { get; set; } = true;

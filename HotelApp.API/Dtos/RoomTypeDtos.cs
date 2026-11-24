@@ -19,7 +19,6 @@ namespace HotelApp.API.Dtos
         };
     }
 
-    /// <summary>Body of POST /api/roomtypes and PUT /api/roomtypes/{id} (RN-014: Administrator only).</summary>
     public class RoomTypeRequest
     {
         [Required(ErrorMessage = "El nombre del tipo de habitación es obligatorio.")]

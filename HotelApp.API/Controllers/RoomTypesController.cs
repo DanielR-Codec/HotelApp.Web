@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.API.Controllers
 {
-    /// <summary>CU-010 / RF-002: room types and their base rate. Creating, changing rates or deleting is for the Administrator (RN-014).</summary>
     [Route("api/roomtypes")]
     public class RoomTypesController : ApiControllerBase
     {
@@ -61,7 +60,6 @@ namespace HotelApp.API.Controllers
             return updated is null ? NotFoundProblem("El tipo de habitación no existe.") : Ok(RoomTypeDto.FromEntity(updated));
         }
 
-        /// <summary>Deletes the type. Not allowed while there are rooms that use it.</summary>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = UserRole.Administrator)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

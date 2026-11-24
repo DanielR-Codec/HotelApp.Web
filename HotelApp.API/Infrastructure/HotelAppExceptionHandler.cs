@@ -6,11 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.API.Infrastructure
 {
-    /// <summary>
-    /// Turns every exception into an RFC 7807 ProblemDetails response.
-    /// Controlled errors (HotelAppException from the DAL or the BL) keep their message and code;
-    /// anything else is an unexpected bug: it is logged and the client only gets a generic 500.
-    /// </summary>
     public class HotelAppExceptionHandler : IExceptionHandler
     {
         private readonly IProblemDetailsService _problemDetails;
@@ -99,7 +94,6 @@ namespace HotelApp.API.Infrastructure
                 ErrorCodes.NotFound => StatusCodes.Status404NotFound,
                 ErrorCodes.Auth => StatusCodes.Status401Unauthorized,
                 ErrorCodes.Forbidden or "RN-014" => StatusCodes.Status403Forbidden,
-                // Any other business rule (RN-xxx / CU-xxx): the request is well-formed but the rule does not allow it
                 _ => StatusCodes.Status422UnprocessableEntity
             },
             _ => StatusCodes.Status400BadRequest

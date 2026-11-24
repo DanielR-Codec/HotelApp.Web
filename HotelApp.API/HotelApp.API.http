@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5087
 
-### 1) Login: copie el "token" de la respuesta en la variable de abajo
+###
 POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
@@ -12,11 +12,11 @@ Content-Type: application/json
 ###
 @token = PEGUE_AQUI_EL_TOKEN
 
-### Usuario actual
+###
 GET {{baseUrl}}/api/auth/me
 Authorization: Bearer {{token}}
 
-### ---------- Hoteles ----------
+###
 GET {{baseUrl}}/api/hotels?includeInactive=false
 Authorization: Bearer {{token}}
 
@@ -51,7 +51,7 @@ Content-Type: application/json
 DELETE {{baseUrl}}/api/hotels/1
 Authorization: Bearer {{token}}
 
-### ---------- Bloques ----------
+###
 GET {{baseUrl}}/api/blocks?hotelId=1
 Authorization: Bearer {{token}}
 
@@ -62,7 +62,7 @@ Content-Type: application/json
 
 { "hotelId": 1, "name": "Torre A", "description": "Frente al mar" }
 
-### ---------- Pisos ----------
+###
 GET {{baseUrl}}/api/floors?hotelId=1&blockId=1
 Authorization: Bearer {{token}}
 
@@ -73,7 +73,7 @@ Content-Type: application/json
 
 { "blockId": 1, "number": 1, "description": "Primer piso" }
 
-### ---------- Tipos de habitación ----------
+###
 GET {{baseUrl}}/api/roomtypes
 Authorization: Bearer {{token}}
 
@@ -84,7 +84,7 @@ Content-Type: application/json
 
 { "name": "Doble", "maxCapacity": 2, "baseRate": 3500.00 }
 
-### ---------- Habitaciones ----------
+###
 GET {{baseUrl}}/api/rooms?hotelId=1
 Authorization: Bearer {{token}}
 
@@ -95,14 +95,14 @@ Content-Type: application/json
 
 { "number": "101", "floorId": 1, "roomTypeId": 1 }
 
-### Cambio manual de estado (CU-012): Disponible | En Limpieza | Mantenimiento
+###
 PATCH {{baseUrl}}/api/rooms/1/status
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 { "status": "En Limpieza" }
 
-### Búsqueda de disponibilidad (CU-004)
+###
 GET {{baseUrl}}/api/rooms/available?checkIn=2026-12-20&checkOut=2026-12-23&guests=2&hotelId=1
 Authorization: Bearer {{token}}
 

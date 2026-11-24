@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.API.Controllers
 {
-    /// <summary>Blocks (buildings / towers / wings). Any logged-in user can read; changes are for the Administrator.</summary>
     [Route("api/blocks")]
     public class BlocksController : ApiControllerBase
     {
@@ -17,7 +16,6 @@ namespace HotelApp.API.Controllers
             _blocks = blocks;
         }
 
-        /// <summary>Blocks ordered by name; optionally only those of one hotel. By default only the active ones.</summary>
         [HttpGet]
         [ProducesResponseType<IEnumerable<BlockDto>>(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<BlockDto>>> GetAll([FromQuery] int? hotelId = null, [FromQuery] bool includeInactive = false)
@@ -62,7 +60,6 @@ namespace HotelApp.API.Controllers
             return updated is null ? NotFoundProblem("El bloque no existe.") : Ok(BlockDto.FromEntity(updated));
         }
 
-        /// <summary>Soft delete: the block becomes inactive. Not allowed while it still has active floors.</summary>
         [HttpDelete("{id:int}")]
         [Authorize(Roles = UserRole.Administrator)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
