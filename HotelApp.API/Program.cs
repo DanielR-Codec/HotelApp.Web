@@ -69,7 +69,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Title = "HotelApp API",
         Version = "v1",
-        Description = "API REST del sistema de reservas de hotel: hoteles, bloques, pisos, tipos de habitación y habitaciones."
+        Description = "API REST del sistema de reservas de hotel de Jose Daniel"
     });
 
     var bearer = new OpenApiSecurityScheme
